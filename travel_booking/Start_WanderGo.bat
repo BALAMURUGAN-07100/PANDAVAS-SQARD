@@ -1,7 +1,7 @@
 @echo off
-title WANDERGO TRAVELS - BUS BOOKING MANAGEMENT SYSTEM
+title PANDAVAS SQARD - BUS BOOKING MANAGEMENT SYSTEM
 echo ==========================================================
-echo   STARTING WANDERGO TRAVELS BUS BOOKING SYSTEM
+echo   STARTING PANDAVAS SQARD BUS BOOKING SYSTEM
 echo ==========================================================
 echo.
 cd /d "%~dp0"

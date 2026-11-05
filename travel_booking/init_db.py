@@ -1,5 +1,5 @@
 """
-Database Initialization & First User Setup Script for WANDERGO TRAVELS
+Database Initialization & First User Setup Script for PANDAVAS SQARD
 Run this script to initialize collections, create indexes, create the first Owner account securely,
 and seed initial sample bus trips.
 
@@ -21,7 +21,7 @@ from models.booking import BookingModel
 
 def initialize_database():
     print("==========================================================")
-    print("  WANDERGO TRAVELS - DATABASE INITIALIZATION & SETUP")
+    print("  PANDAVAS SQARD - DATABASE INITIALIZATION & SETUP")
     print("==========================================================")
     
     # 1. Connect to DB
@@ -89,8 +89,8 @@ def initialize_database():
         sample_bookings = [
             {
                 "travel_date": "2026-11-15",
-                "bus_number": "TN 38 AB 1234",
-                "bus_type": "AC Sleeper",
+                "bus_number": "Pavitha_BM2999",
+                "bus_type": "AC Sleeper (2+1)",
                 "source": "Coimbatore",
                 "destination": "Chennai",
                 "departure_time": "8:00 PM",
@@ -105,8 +105,8 @@ def initialize_database():
             },
             {
                 "travel_date": "2026-11-15",
-                "bus_number": "TN 38 CC 5678",
-                "bus_type": "Volvo Multi-Axle AC",
+                "bus_number": "Bheeman_AK4777",
+                "bus_type": "AC Semi-Sleeper (2+2)",
                 "source": "Coimbatore",
                 "destination": "Bangalore",
                 "departure_time": "10:30 PM",
@@ -120,9 +120,25 @@ def initialize_database():
                 "status": "BOOKED"
             },
             {
+                "travel_date": "2026-11-18",
+                "bus_number": "Pavitha_BB2999",
+                "bus_type": "AC Sleeper (2+1)",
+                "source": "Chennai",
+                "destination": "Madurai",
+                "departure_time": "9:00 PM",
+                "arrival_time": "6:00 AM",
+                "driver_name": "Kumar",
+                "driver_phone": "+91 98765 43210",
+                "customer_name": "Murugan Vel",
+                "customer_phone": "+91 98411 99887",
+                "passenger_count": 36,
+                "notes": "Direct Madurai bypass",
+                "status": "BOOKED"
+            },
+            {
                 "travel_date": "2026-11-20",
-                "bus_number": "TN 38 AB 1234",
-                "bus_type": "AC Sleeper",
+                "bus_number": "Dharman_AZ2383",
+                "bus_type": "AC Sleeper (2+1)",
                 "source": "Chennai",
                 "destination": "Coimbatore",
                 "departure_time": "8:30 PM",
@@ -133,6 +149,22 @@ def initialize_database():
                 "customer_phone": "+91 94433 22110",
                 "passenger_count": 28,
                 "notes": "Return journey",
+                "status": "BOOKED"
+            },
+            {
+                "travel_date": "2026-11-25",
+                "bus_number": "Jadamuni_B9939",
+                "bus_type": "Volvo Multi-Axle AC",
+                "source": "Coimbatore",
+                "destination": "Hyderabad",
+                "departure_time": "6:00 PM",
+                "arrival_time": "8:00 AM",
+                "driver_name": "Selvam",
+                "driver_phone": "+91 98765 88990",
+                "customer_name": "Venkatesh Rao",
+                "customer_phone": "+91 99887 76655",
+                "passenger_count": 45,
+                "notes": "Interstate long distance route",
                 "status": "BOOKED"
             }
         ]

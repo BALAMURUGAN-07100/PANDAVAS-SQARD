@@ -1,9 +1,53 @@
 {% extends "base.html" %}
 
-{% block title %}Owner Dashboard - WanderGo Travels{% endblock %}
+{% block title %}Owner Dashboard - Pandavas Sqard{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-1 px-md-3">
+
+    <!-- 5-BUS FLEET HERO BANNER & SELECTOR -->
+    <div class="card border-0 shadow-sm rounded-4 mb-3 bg-white overflow-hidden">
+        <!-- Fleet Banner Image with Overlay -->
+        <div class="fleet-hero-banner position-relative">
+            <img src="{{ url_for('static', filename='images/fleet.jpg') }}" alt="Pandavas Sqard 5-Bus Fleet" class="w-100 fleet-banner-img">
+            <div class="fleet-hero-overlay d-flex flex-wrap align-items-center justify-content-between p-3 text-white">
+                <div>
+                    <span class="badge bg-warning text-dark fw-bold px-2 py-1 mb-1">
+                        <i class="bi bi-bus-front-fill me-1"></i> OUR 5-BUS FLEET
+                    </span>
+                    <h5 class="fw-bold mb-0 text-white text-shadow">Pavitha &bull; Bheeman &bull; Dharman &bull; Jadamuni</h5>
+                    <p class="small text-white-50 mb-0 d-none d-sm-block">Click any bus below to view its month-wise booked & available dates</p>
+                </div>
+                <div id="fleetFilterStatusBadge" class="badge bg-white text-brand fw-bold px-3 py-2 rounded-pill shadow-sm fs-6 mt-2 mt-sm-0">
+                    <i class="bi bi-grid-fill me-1"></i> Showing: All 5 Buses
+                </div>
+            </div>
+        </div>
+
+        <!-- 5 Bus Interactive Filter Buttons -->
+        <div class="card-body p-2 p-md-3 bg-light border-top">
+            <div class="d-flex flex-wrap align-items-center justify-content-start gap-2" id="fleetBusButtons">
+                <button type="button" class="btn btn-sm btn-brand rounded-pill px-3 fw-bold fleet-btn active" data-bus="ALL" onclick="selectFleetBus('ALL')">
+                    <i class="bi bi-grid-fill me-1"></i> All 5 Buses
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 fw-bold fleet-btn" data-bus="Pavitha_BM2999" onclick="selectFleetBus('Pavitha_BM2999')">
+                    🚍 Pavitha_BM2999
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 fw-bold fleet-btn" data-bus="Pavitha_BB2999" onclick="selectFleetBus('Pavitha_BB2999')">
+                    🚍 Pavitha_BB2999
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 fw-bold fleet-btn" data-bus="Bheeman_AK4777" onclick="selectFleetBus('Bheeman_AK4777')">
+                    🚍 Bheeman_AK4777
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 fw-bold fleet-btn" data-bus="Dharman_AZ2383" onclick="selectFleetBus('Dharman_AZ2383')">
+                    🚍 Dharman_AZ2383
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 fw-bold fleet-btn" data-bus="Jadamuni_B9939" onclick="selectFleetBus('Jadamuni_B9939')">
+                    🚍 Jadamuni_B9939
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Top Action & Info Bar -->
     <div class="card border-0 shadow-sm rounded-4 mb-3 bg-white">
@@ -127,11 +171,21 @@
                     
                     <!-- Search and Filter Bar -->
                     <div class="row g-2 mb-3">
-                        <div class="col-12 col-md-5">
+                        <div class="col-12 col-md-4">
                             <div class="input-group input-group-sm">
                                 <span class="input-group-text bg-light border-end-0"><i class="bi bi-search"></i></span>
-                                <input type="text" id="bookingSearchInput" class="form-control border-start-0" placeholder="Search bus, route, customer, driver...">
+                                <input type="text" id="bookingSearchInput" class="form-control border-start-0" placeholder="Search route, customer, driver...">
                             </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <select id="bookingBusFilter" class="form-select form-select-sm">
+                                <option value="">Fleet: All 5 Buses</option>
+                                <option value="Pavitha_BM2999">Pavitha_BM2999</option>
+                                <option value="Pavitha_BB2999">Pavitha_BB2999</option>
+                                <option value="Bheeman_AK4777">Bheeman_AK4777</option>
+                                <option value="Dharman_AZ2383">Dharman_AZ2383</option>
+                                <option value="Jadamuni_B9939">Jadamuni_B9939</option>
+                            </select>
                         </div>
                         <div class="col-6 col-md-3">
                             <select id="bookingStatusFilter" class="form-select form-select-sm">
@@ -142,9 +196,9 @@
                                 <option value="CANCELLED">Status: Cancelled Only</option>
                             </select>
                         </div>
-                        <div class="col-6 col-md-4 text-end">
-                            <button class="btn btn-outline-secondary btn-sm rounded-pill" id="filterResetBtn">
-                                Reset Filters
+                        <div class="col-12 col-md-2 text-end">
+                            <button class="btn btn-outline-secondary btn-sm rounded-pill w-100" id="filterResetBtn">
+                                Reset
                             </button>
                         </div>
                     </div>
@@ -244,9 +298,17 @@
                         </div>
                         <div class="col-12 col-md-6">
                             <label class="form-label fw-semibold small text-secondary">
-                                2. Bus Registration Number <span class="text-danger">*</span>
+                                2. Select Bus (5 Fleet Buses) <span class="text-danger">*</span>
                             </label>
-                            <input type="text" class="form-control rounded-3 text-uppercase" id="formBusNumber" placeholder="e.g. TN 38 AB 1234" required>
+                            <select class="form-select rounded-3 text-uppercase fw-bold text-brand" id="formBusSelect" required onchange="onBusSelectChange(this)">
+                                <option value="">-- Choose from 5 Fleet Buses --</option>
+                                <option value="Pavitha_BM2999" data-type="AC Sleeper (2+1)">🚍 Pavitha_BM2999 (AC Sleeper)</option>
+                                <option value="Pavitha_BB2999" data-type="AC Sleeper (2+1)">🚍 Pavitha_BB2999 (AC Sleeper)</option>
+                                <option value="Bheeman_AK4777" data-type="AC Semi-Sleeper (2+2)">🚍 Bheeman_AK4777 (AC Semi-Sleeper)</option>
+                                <option value="Dharman_AZ2383" data-type="AC Sleeper (2+1)">🚍 Dharman_AZ2383 (AC Sleeper)</option>
+                                <option value="Jadamuni_B9939" data-type="Volvo Multi-Axle AC">🚍 Jadamuni_B9939 (Volvo Multi-Axle AC)</option>
+                            </select>
+                            <input type="hidden" id="formBusNumber" name="formBusNumber" value="">
                             <div class="form-text smaller text-muted">Same bus cannot be booked twice on same date. Different buses are allowed.</div>
                         </div>
                     </div>

@@ -1,5 +1,5 @@
 /**
- * WANDERGO TRAVELS - BOOKING MANAGEMENT MODULE
+ * PANDAVAS SQARD - BOOKING MANAGEMENT MODULE
  * Handles Create, Edit, Cancel, and Delete of bus bookings.
  * Enforces validation, handles duplicate bus checks, and updates calendar state.
  */
@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Bookings table search & filter listeners
     const searchInput = document.getElementById("bookingSearchInput");
     const statusFilter = document.getElementById("bookingStatusFilter");
+    const busFilter = document.getElementById("bookingBusFilter");
     const resetBtn = document.getElementById("filterResetBtn");
 
     if (searchInput) {
@@ -47,10 +48,15 @@ document.addEventListener("DOMContentLoaded", function() {
         statusFilter.addEventListener("change", loadBookingsList);
     }
 
+    if (busFilter) {
+        busFilter.addEventListener("change", loadBookingsList);
+    }
+
     if (resetBtn) {
         resetBtn.addEventListener("click", () => {
             if (searchInput) searchInput.value = "";
             if (statusFilter) statusFilter.value = "";
+            if (busFilter) busFilter.value = "";
             loadBookingsList();
         });
     }
@@ -89,7 +95,7 @@ function populateDriverSelect() {
 /**
  * Open Booking Modal for Create or Edit
  */
-function openBookingModal(bookingId = null, prefillDate = null) {
+function openBookingModal(bookingId = null, prefillDate = null, prefillBus = null) {
     const modalEl = document.getElementById("bookingFormModal");
     if (!modalEl) return;
 
@@ -101,6 +107,9 @@ function openBookingModal(bookingId = null, prefillDate = null) {
     document.getElementById("bookingForm").reset();
     document.getElementById("bookingId").value = bookingId || "";
 
+    const busSelect = document.getElementById("formBusSelect");
+    const busNumberInput = document.getElementById("formBusNumber");
+
     if (bookingId) {
         modalTitle.innerHTML = `<i class="bi bi-pencil-square"></i> <span>Edit Bus Booking</span>`;
         // Fetch existing booking
@@ -110,7 +119,10 @@ function openBookingModal(bookingId = null, prefillDate = null) {
                 if (!res.success) throw new Error(res.error || "Failed to load booking");
                 const b = res.booking;
                 document.getElementById("formTravelDate").value = b.travel_date || "";
-                document.getElementById("formBusNumber").value = b.bus_number || "";
+                
+                if (busSelect) busSelect.value = b.bus_number || "";
+                if (busNumberInput) busNumberInput.value = b.bus_number || "";
+
                 document.getElementById("formBusType").value = b.bus_type || "AC Sleeper (2+1)";
                 document.getElementById("formSource").value = b.source || "";
                 document.getElementById("formDestination").value = b.destination || "";
@@ -135,12 +147,40 @@ function openBookingModal(bookingId = null, prefillDate = null) {
         } else {
             document.getElementById("formTravelDate").value = new Date().toISOString().split("T")[0];
         }
+
+        const initialBus = prefillBus || (CalendarState && CalendarState.selectedBus !== "ALL" ? CalendarState.selectedBus : "Pavitha_BM2999");
+        if (busSelect) {
+            busSelect.value = initialBus;
+            onBusSelectChange(busSelect);
+        } else if (busNumberInput) {
+            busNumberInput.value = initialBus;
+        }
+
         document.getElementById("formStatus").value = "BOOKED";
         document.getElementById("formPassengerCount").value = "1";
     }
 
     const modal = new bootstrap.Modal(modalEl);
     modal.show();
+}
+
+/**
+ * Auto-sync bus number and type when choosing from the 5 fleet buses
+ */
+function onBusSelectChange(selectEl) {
+    if (!selectEl) return;
+    const busNumberInput = document.getElementById("formBusNumber");
+    const busTypeSelect = document.getElementById("formBusType");
+    const selectedOpt = selectEl.options[selectEl.selectedIndex];
+
+    if (selectedOpt && selectedOpt.value) {
+        if (busNumberInput) busNumberInput.value = selectedOpt.value;
+        if (busTypeSelect && selectedOpt.dataset.type) {
+            busTypeSelect.value = selectedOpt.dataset.type;
+        }
+    } else {
+        if (busNumberInput) busNumberInput.value = "";
+    }
 }
 
 /**
@@ -306,10 +346,12 @@ function loadBookingsList() {
 
     const search = document.getElementById("bookingSearchInput")?.value || "";
     const status = document.getElementById("bookingStatusFilter")?.value || "";
+    const bus = document.getElementById("bookingBusFilter")?.value || "";
 
     const params = new URLSearchParams();
     if (search) params.append("search", search);
     if (status) params.append("status", status);
+    if (bus) params.append("bus_number", bus);
 
     fetch(`/api/bookings?${params.toString()}`)
         .then(res => res.json())

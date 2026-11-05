@@ -1,9 +1,53 @@
 {% extends "base.html" %}
 
-{% block title %}Driver Calendar - WanderGo Travels{% endblock %}
+{% block title %}Driver Calendar - Pandavas Sqard{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-1 px-md-3">
+
+    <!-- 5-BUS FLEET HERO BANNER & SELECTOR -->
+    <div class="card border-0 shadow-sm rounded-4 mb-3 bg-white overflow-hidden">
+        <!-- Fleet Banner Image with Overlay -->
+        <div class="fleet-hero-banner position-relative">
+            <img src="{{ url_for('static', filename='images/fleet.jpg') }}" alt="Pandavas Sqard 5-Bus Fleet" class="w-100 fleet-banner-img">
+            <div class="fleet-hero-overlay d-flex flex-wrap align-items-center justify-content-between p-3 text-white">
+                <div>
+                    <span class="badge bg-warning text-dark fw-bold px-2 py-1 mb-1">
+                        <i class="bi bi-bus-front-fill me-1"></i> OUR 5-BUS FLEET
+                    </span>
+                    <h5 class="fw-bold mb-0 text-white text-shadow">Pavitha &bull; Bheeman &bull; Dharman &bull; Jadamuni</h5>
+                    <p class="small text-white-50 mb-0 d-none d-sm-block">Click any bus below to view its month-wise booked & available dates</p>
+                </div>
+                <div id="fleetFilterStatusBadge" class="badge bg-white text-brand fw-bold px-3 py-2 rounded-pill shadow-sm fs-6 mt-2 mt-sm-0">
+                    <i class="bi bi-grid-fill me-1"></i> Showing: All 5 Buses
+                </div>
+            </div>
+        </div>
+
+        <!-- 5 Bus Interactive Filter Buttons -->
+        <div class="card-body p-2 p-md-3 bg-light border-top">
+            <div class="d-flex flex-wrap align-items-center justify-content-start gap-2" id="fleetBusButtons">
+                <button type="button" class="btn btn-sm btn-brand rounded-pill px-3 fw-bold fleet-btn active" data-bus="ALL" onclick="selectFleetBus('ALL')">
+                    <i class="bi bi-grid-fill me-1"></i> All 5 Buses
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 fw-bold fleet-btn" data-bus="Pavitha_BM2999" onclick="selectFleetBus('Pavitha_BM2999')">
+                    🚍 Pavitha_BM2999
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 fw-bold fleet-btn" data-bus="Pavitha_BB2999" onclick="selectFleetBus('Pavitha_BB2999')">
+                    🚍 Pavitha_BB2999
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 fw-bold fleet-btn" data-bus="Bheeman_AK4777" onclick="selectFleetBus('Bheeman_AK4777')">
+                    🚍 Bheeman_AK4777
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 fw-bold fleet-btn" data-bus="Dharman_AZ2383" onclick="selectFleetBus('Dharman_AZ2383')">
+                    🚍 Dharman_AZ2383
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 fw-bold fleet-btn" data-bus="Jadamuni_B9939" onclick="selectFleetBus('Jadamuni_B9939')">
+                    🚍 Jadamuni_B9939
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Driver Info Banner -->
     <div class="card border-0 shadow-sm rounded-4 mb-3 bg-white">

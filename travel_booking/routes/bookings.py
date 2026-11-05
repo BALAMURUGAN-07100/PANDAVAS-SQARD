@@ -8,21 +8,43 @@ bookings_bp = Blueprint("bookings", __name__, url_prefix="/api")
 # READ ENDPOINTS (Shared: Accessible by both Owner and Driver)
 # -------------------------------------------------------------
 
+OFFICIAL_BUSES = [
+    {"number": "Pavitha_BM2999", "name": "Pavitha (BM2999)", "type": "AC Sleeper (2+1)"},
+    {"number": "Pavitha_BB2999", "name": "Pavitha (BB2999)", "type": "AC Sleeper (2+1)"},
+    {"number": "Bheeman_AK4777", "name": "Bheeman (AK4777)", "type": "AC Semi-Sleeper (2+2)"},
+    {"number": "Dharman_AZ2383", "name": "Dharman (AZ2383)", "type": "AC Sleeper (2+1)"},
+    {"number": "Jadamuni_B9939", "name": "Jadamuni (B9939)", "type": "Volvo Multi-Axle AC"}
+]
+
+@bookings_bp.route("/official-buses", methods=["GET"])
+@login_required
+def get_official_buses():
+    """
+    Returns the 5 official fleet buses.
+    """
+    return jsonify({
+        "success": True,
+        "buses": OFFICIAL_BUSES
+    })
+
 @bookings_bp.route("/calendar/<int:year>", methods=["GET"])
 @login_required
 def get_calendar_year(year):
     """
     Returns all active bookings for the specified year, grouped by travel_date.
+    Optionally filters by bus_number for single-bus month-wise views.
     Used by frontend calendar to render GREEN (available) vs RED (booked) days.
     """
     if year < 1900 or year > 2100:
         return jsonify({"error": "Invalid year."}), 400
 
+    bus_number = request.args.get("bus_number")
     try:
-        data = BookingModel.get_calendar_year_data(year)
+        data = BookingModel.get_calendar_year_data(year, bus_number=bus_number)
         return jsonify({
             "success": True,
             "year": year,
+            "bus_number": bus_number or "ALL",
             "bookings": data
         })
     except Exception as e:
@@ -35,13 +57,20 @@ def get_bookings_by_date(date_str):
     """
     Returns trip details for a specific date.
     Drivers only see active trips. Owner can see all including cancelled if requested.
+    Optionally filters by bus_number.
     """
     try:
         include_cancelled = (session.get("role") == "owner" and request.args.get("include_cancelled") == "true")
-        trips = BookingModel.get_bookings_by_date(date_str, include_cancelled=include_cancelled)
+        bus_number = request.args.get("bus_number")
+        trips = BookingModel.get_bookings_by_date(
+            date_str,
+            include_cancelled=include_cancelled,
+            bus_number=bus_number
+        )
         return jsonify({
             "success": True,
             "date": date_str,
+            "bus_number": bus_number or "ALL",
             "trips": trips,
             "count": len(trips)
         })
@@ -70,9 +99,10 @@ def get_single_booking(booking_id):
 @login_required
 def list_bookings():
     """
-    List bookings with search & status filters.
+    List bookings with search, bus & status filters.
     """
     status = request.args.get("status")
+    bus_number = request.args.get("bus_number")
     date_from = request.args.get("date_from")
     date_to = request.args.get("date_to")
     search = request.args.get("search")
@@ -80,6 +110,7 @@ def list_bookings():
     try:
         bookings = BookingModel.get_all_bookings(
             status=status,
+            bus_number=bus_number,
             date_from=date_from,
             date_to=date_to,
             search=search

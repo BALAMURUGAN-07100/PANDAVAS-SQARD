@@ -191,11 +191,13 @@ class BookingModel:
             return False
 
     @staticmethod
-    def get_bookings_by_date(travel_date, include_cancelled=False):
+    def get_bookings_by_date(travel_date, include_cancelled=False, bus_number=None):
         travel_date = BookingModel.normalize_date(travel_date)
         query = {"travel_date": travel_date}
         if not include_cancelled:
             query["status"] = {"$ne": "CANCELLED"}
+        if bus_number and bus_number != "ALL":
+            query["bus_number"] = BookingModel.normalize_bus_number(bus_number)
 
         cursor = BookingModel.get_collection().find(query).sort("departure_time", 1)
         bookings = []
@@ -205,9 +207,10 @@ class BookingModel:
         return bookings
 
     @staticmethod
-    def get_calendar_year_data(year):
+    def get_calendar_year_data(year, bus_number=None):
         """
         Returns active bookings summary for a given 4-digit year.
+        Optionally filtered by bus_number for single-bus month-wise views.
         Dictionary where keys are 'YYYY-MM-DD' and values are arrays of active trip summaries.
         """
         regex = f"^{year}-"
@@ -215,6 +218,8 @@ class BookingModel:
             "travel_date": {"$regex": regex},
             "status": {"$ne": "CANCELLED"}
         }
+        if bus_number and bus_number != "ALL":
+            query["bus_number"] = BookingModel.normalize_bus_number(bus_number)
 
         cursor = BookingModel.get_collection().find(query).sort("departure_time", 1)
         calendar_map = {}
@@ -240,13 +245,16 @@ class BookingModel:
         return calendar_map
 
     @staticmethod
-    def get_all_bookings(status=None, date_from=None, date_to=None, search=None, limit=200):
+    def get_all_bookings(status=None, bus_number=None, date_from=None, date_to=None, search=None, limit=200):
         query = {}
         if status and status != "ALL":
             query["status"] = status
         elif not status:
             # By default exclude cancelled unless specified
             pass
+
+        if bus_number and bus_number != "ALL":
+            query["bus_number"] = BookingModel.normalize_bus_number(bus_number)
 
         if date_from or date_to:
             date_filter = {}

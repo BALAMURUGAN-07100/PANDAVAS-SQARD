@@ -1,4 +1,4 @@
-# 🚌 WANDERGO TRAVELS - BUS BOOKING MANAGEMENT SYSTEM
+# 🚌 PANDAVAS SQARD - BUS BOOKING MANAGEMENT SYSTEM
 
 A complete, production-ready, mobile-friendly Travel Agency Bus Booking Management Website built with Python Flask, Bootstrap 5, and MongoDB Atlas.
 

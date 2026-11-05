@@ -2,8 +2,9 @@ import os
 import sys
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
-load_dotenv()
+# Ensure .env is loaded from the travel_booking directory
+basedir = os.path.dirname(os.path.abspath(__file__))
+load_dotenv(os.path.join(basedir, ".env"))
 
 class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "wandergo-secret-key-change-in-production-2026")
@@ -32,8 +33,21 @@ def get_db():
 
     try:
         from pymongo import MongoClient
-        # Set a 3-second timeout for server selection so local testing doesn't hang if no server is running
-        client = MongoClient(mongo_uri, serverSelectionTimeoutMS=3000)
+        
+        # Configure client with SSL/TLS parameters
+        client_kwargs = {
+            "serverSelectionTimeoutMS": 8000,
+            "connectTimeoutMS": 8000,
+            "tlsAllowInvalidCertificates": True
+        }
+        
+        try:
+            import certifi
+            client_kwargs["tlsCAFile"] = certifi.where()
+        except ImportError:
+            pass
+
+        client = MongoClient(mongo_uri, **client_kwargs)
         # Verify connection
         client.admin.command('ping')
         _client = client

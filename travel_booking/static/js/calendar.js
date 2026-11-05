@@ -1,5 +1,5 @@
 /**
- * WANDERGO TRAVELS - CALENDAR CORE ENGINE
+ * PANDAVAS SQARD - CALENDAR CORE ENGINE
  * Dynamic multi-year, leap-year, and weekday calculation.
  * Renders Theatre-Ticket Booking Grid (Large Month) and 12-Month Full Year Grid.
  */
@@ -19,8 +19,63 @@ const CalendarState = {
     activeView: "month", // 'month' or 'year' or 'list'
     yearBookingsMap: {}, // 'YYYY-MM-DD' -> [trip, ...]
     todayDateStr: "",
+    selectedBus: "ALL", // 'ALL' or 'Pavitha_BM2999', 'Pavitha_BB2999', 'Bheeman_AK4777', 'Dharman_AZ2383', 'Jadamuni_B9939'
     syncInterval: null
 };
+
+// 5 Official Fleet Buses
+const FLEET_BUSES = [
+    { number: "Pavitha_BM2999", label: "Pavitha (BM 2999)", type: "AC Sleeper (2+1)" },
+    { number: "Pavitha_BB2999", label: "Pavitha (BB 2999)", type: "AC Sleeper (2+1)" },
+    { number: "Bheeman_AK4777", label: "Bheeman (AK 4777)", type: "AC Semi-Sleeper (2+2)" },
+    { number: "Dharman_AZ2383", label: "Dharman (AZ 2383)", type: "AC Sleeper (2+1)" },
+    { number: "Jadamuni_B9939", label: "Jadamuni (B 9939)", type: "Volvo Multi-Axle AC" }
+];
+
+/**
+ * Switch Fleet Bus Filter
+ */
+function selectFleetBus(busNumber) {
+    CalendarState.selectedBus = busNumber;
+
+    // Update active button state in UI
+    const buttons = document.querySelectorAll(".fleet-btn");
+    buttons.forEach(btn => {
+        if (btn.dataset.bus === busNumber) {
+            btn.classList.add("active", "btn-brand");
+            btn.classList.remove("btn-outline-secondary");
+        } else {
+            btn.classList.remove("active", "btn-brand");
+            btn.classList.add("btn-outline-secondary");
+        }
+    });
+
+    // Update status badge
+    const badge = document.getElementById("fleetFilterStatusBadge");
+    if (badge) {
+        if (busNumber === "ALL") {
+            badge.innerHTML = `<i class="bi bi-grid-fill me-1"></i> Showing: All 5 Buses`;
+            badge.className = "badge bg-white text-brand fw-bold px-3 py-2 rounded-pill shadow-sm fs-6 mt-2 mt-sm-0";
+        } else {
+            const busObj = FLEET_BUSES.find(b => b.number === busNumber);
+            const label = busObj ? busObj.label : busNumber;
+            badge.innerHTML = `<i class="bi bi-bus-front-fill me-1"></i> Single Bus: ${label}`;
+            badge.className = "badge bg-warning text-dark fw-bold px-3 py-2 rounded-pill shadow-sm fs-6 mt-2 mt-sm-0";
+        }
+    }
+
+    // Reload calendar data for this specific bus
+    loadCalendarData(CalendarState.currentYear, false);
+
+    // If list view is active, update booking table filters too
+    const busFilterSelect = document.getElementById("bookingBusFilter");
+    if (busFilterSelect) {
+        busFilterSelect.value = (busNumber === "ALL" ? "" : busNumber);
+        if (typeof loadBookingsList === "function") {
+            loadBookingsList();
+        }
+    }
+}
 
 // Formats a Date object to YYYY-MM-DD
 function formatDateISO(year, monthIndex, day) {
@@ -210,7 +265,11 @@ function triggerSyncAnimation(showToast = false) {
  * Fetch calendar bookings from server for specified year
  */
 function loadCalendarData(year, showToast = false) {
-    fetch(`/api/calendar/${year}`)
+    const busParam = (CalendarState.selectedBus && CalendarState.selectedBus !== "ALL")
+        ? `?bus_number=${encodeURIComponent(CalendarState.selectedBus)}`
+        : "";
+
+    fetch(`/api/calendar/${year}${busParam}`)
         .then(response => {
             if (!response.ok) throw new Error("Failed to fetch calendar bookings");
             return response.json();
@@ -478,12 +537,16 @@ function showDriverDatePopup(dateStr) {
         modalBody.innerHTML = tripsHtml;
     } else {
         // Available Date
+        const busNotice = (CalendarState.selectedBus && CalendarState.selectedBus !== "ALL")
+            ? `<div class="badge bg-success-subtle text-success fs-6 mb-2">Bus: <strong>${escapeHtml(CalendarState.selectedBus)}</strong></div>`
+            : "";
         modalTitle.textContent = "DATE AVAILABLE";
         modalBody.innerHTML = `
             <div class="text-center py-4">
                 <div class="display-4 text-success mb-2">
                     <i class="bi bi-check-circle-fill"></i>
                 </div>
+                ${busNotice}
                 <h4 class="fw-bold text-success mb-2">DATE AVAILABLE</h4>
                 <p class="fs-5 fw-semibold text-dark mb-1">Date: ${prettyDate}</p>
                 <p class="text-muted">Status: No booking available.</p>
@@ -511,20 +574,28 @@ function showOwnerDatePopup(dateStr) {
     const btnBookThisDate = document.getElementById("btnBookThisDate");
     const prettyDate = formatPrettyDate(dateStr);
 
-    titleEl.textContent = `Date Details: ${prettyDate}`;
+    const busLabel = (CalendarState.selectedBus && CalendarState.selectedBus !== "ALL")
+        ? ` (${CalendarState.selectedBus})`
+        : "";
+    titleEl.textContent = `Date Details: ${prettyDate}${busLabel}`;
 
     if (btnBookThisDate) {
         btnBookThisDate.onclick = () => {
             const modalInstance = bootstrap.Modal.getInstance(modalEl);
             if (modalInstance) modalInstance.hide();
             if (typeof openBookingModal === "function") {
-                openBookingModal(null, dateStr);
+                const prefillBus = (CalendarState.selectedBus !== "ALL") ? CalendarState.selectedBus : null;
+                openBookingModal(null, dateStr, prefillBus);
             }
         };
     }
 
     // Fetch latest bookings for this date including cancelled if any
-    fetch(`/api/bookings/date/${dateStr}?include_cancelled=true`)
+    const busParam = (CalendarState.selectedBus && CalendarState.selectedBus !== "ALL")
+        ? `&bus_number=${encodeURIComponent(CalendarState.selectedBus)}`
+        : "";
+
+    fetch(`/api/bookings/date/${dateStr}?include_cancelled=true${busParam}`)
         .then(res => res.json())
         .then(res => {
             if (!res.success) throw new Error(res.error || "Failed to load date details");

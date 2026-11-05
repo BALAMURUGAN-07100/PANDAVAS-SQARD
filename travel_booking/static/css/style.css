@@ -1,5 +1,5 @@
 /* ==========================================================
-   WANDERGO TRAVELS - MODERN BOOKING SYSTEM STYLES
+   PANDAVAS SQARD - MODERN BUS BOOKING SYSTEM STYLES
    Theme: Dark Green Primary, White Background, Light Green Available, Soft Red Booked
    ========================================================== */
 
@@ -404,3 +404,63 @@ body {
         font-size: 0.7rem;
     }
 }
+
+/* ==========================================================
+   5-BUS FLEET BANNER & SELECTOR STYLES
+   ========================================================== */
+.fleet-hero-banner {
+    width: 100%;
+    max-height: 220px;
+    overflow: hidden;
+    position: relative;
+    background-color: #064e3b;
+    border-radius: 16px 16px 0 0;
+}
+
+.fleet-banner-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    object-position: center;
+    filter: brightness(0.9);
+    transition: transform 0.4s ease;
+}
+
+.fleet-hero-banner:hover .fleet-banner-img {
+    transform: scale(1.02);
+}
+
+.fleet-hero-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(180deg, rgba(6, 78, 59, 0) 0%, rgba(6, 78, 59, 0.94) 80%);
+}
+
+.text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.fleet-btn {
+    transition: all 0.2s ease;
+    border-width: 1.5px;
+}
+
+.fleet-btn.active {
+    background-color: var(--brand-primary) !important;
+    color: #ffffff !important;
+    border-color: var(--brand-primary) !important;
+    box-shadow: 0 2px 8px rgba(6, 78, 59, 0.35);
+}
+
+.fleet-filter-indicator {
+    background-color: #ecfdf5;
+    border: 1.5px solid #a7f3d0;
+    color: #065f46;
+    border-radius: 10px;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+

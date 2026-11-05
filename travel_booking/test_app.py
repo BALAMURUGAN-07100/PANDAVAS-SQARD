@@ -1,5 +1,5 @@
 """
-Automated Comprehensive Test Suite for WANDERGO TRAVELS
+Automated Comprehensive Test Suite for PANDAVAS SQARD
 Covers all 10 test scenarios specified in the project requirements.
 """
 
@@ -18,7 +18,7 @@ from config import Config, get_db
 from models.user import UserModel
 from models.booking import BookingModel
 
-class WanderGoTravelsTestCase(unittest.TestCase):
+class PandavasSqardTestCase(unittest.TestCase):
     def setUp(self):
         self.app = create_app()
         self.app.config["TESTING"] = True

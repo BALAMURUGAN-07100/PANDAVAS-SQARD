@@ -51,5 +51,5 @@ app = create_app()
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))
     debug = os.getenv("FLASK_ENV") != "production"
-    print(f"=== WANDERGO TRAVELS BOOKING SYSTEM RUNNING ON http://127.0.0.1:{port} ===")
+    print(f"=== PANDAVAS SQARD BOOKING SYSTEM RUNNING ON http://127.0.0.1:{port} ===")
     app.run(host="0.0.0.0", port=port, debug=debug)

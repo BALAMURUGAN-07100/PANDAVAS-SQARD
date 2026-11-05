@@ -1,5 +1,5 @@
 /**
- * WANDERGO TRAVELS - DASHBOARD MODULE
+ * PANDAVAS SQARD - DASHBOARD MODULE
  * Handles Driver Management (Owner) and Driver Trips List (Driver View).
  */
 
