@@ -9,7 +9,7 @@
     <div class="card border-0 shadow-sm rounded-4 mb-3 bg-white overflow-hidden">
         <!-- Fleet Banner Image with Overlay -->
         <div class="fleet-hero-banner position-relative">
-            <img src="{{ url_for('static', filename='images/fleet.jpg') }}" alt="Pandavas Sqard 5-Bus Fleet" class="w-100 fleet-banner-img">
+            <img src="{{ url_for('static', filename='images/fleet.jpg') }}" alt="Pandavas Sqard 5-Bus Fleet" class="w-100 fleet-banner-img" id="fleetBannerImg" onerror="this.style.display='none'">
             <div class="fleet-hero-overlay d-flex flex-wrap align-items-center justify-content-between p-3 text-white">
                 <div>
                     <span class="badge bg-warning text-dark fw-bold px-2 py-1 mb-1">

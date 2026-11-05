@@ -464,3 +464,8 @@ body {
     font-weight: 600;
 }
 
+#fleetCanvas {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    background-color: #111827;
+}
+
