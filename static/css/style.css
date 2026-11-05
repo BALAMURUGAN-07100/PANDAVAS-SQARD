@@ -1,0 +1,466 @@
+/* ==========================================================
+   PANDAVAS SQARD - MODERN BUS BOOKING SYSTEM STYLES
+   Theme: Dark Green Primary, White Background, Light Green Available, Soft Red Booked
+   ========================================================== */
+
+:root {
+    --brand-primary: #064e3b;       /* Dark Green */
+    --brand-primary-hover: #047857; /* Medium Dark Green */
+    --brand-accent: #10b981;        /* Emerald Green */
+    --brand-dark: #022c22;
+    --brand-light: #f0fdf4;
+    
+    /* Calendar Colors */
+    --date-available-bg: #dcfce7;   /* Light Green */
+    --date-available-border: #86efac;
+    --date-available-text: #15803d;
+    --date-available-badge: #22c55e;
+
+    --date-booked-bg: #fee2e2;      /* Soft Red */
+    --date-booked-border: #fca5a5;
+    --date-booked-text: #b91c1c;
+    --date-booked-badge: #ef4444;
+
+    --date-today-border: #064e3b;   /* Dark Green Border */
+    --date-today-bg: #ecfdf5;
+
+    --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: #f8fafc;
+    color: #1e293b;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+.main-wrapper {
+    flex: 1;
+}
+
+/* Brand Helpers */
+.bg-brand {
+    background-color: var(--brand-primary) !important;
+}
+
+.text-brand {
+    color: var(--brand-primary) !important;
+}
+
+.btn-brand {
+    background-color: var(--brand-primary);
+    color: #ffffff;
+    border: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-brand:hover, .btn-brand:focus, .btn-brand:active {
+    background-color: var(--brand-primary-hover);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(6, 78, 59, 0.25);
+}
+
+.btn-outline-brand {
+    color: var(--brand-primary);
+    border: 1.5px solid var(--brand-primary);
+    background-color: transparent;
+    transition: all 0.2s ease;
+}
+
+.btn-outline-brand:hover {
+    background-color: var(--brand-primary);
+    color: #ffffff;
+}
+
+/* Typography & Badges */
+.smaller {
+    font-size: 0.75rem;
+}
+
+.tracking-wider {
+    letter-spacing: 0.05em;
+}
+
+/* Legend colors */
+.legend-color {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    vertical-align: middle;
+}
+
+.legend-available {
+    background-color: var(--date-available-bg);
+    border: 1.5px solid var(--date-available-border);
+}
+
+.legend-booked {
+    background-color: var(--date-booked-bg);
+    border: 1.5px solid var(--date-booked-border);
+}
+
+.legend-today {
+    background-color: var(--date-today-bg);
+    border: 2px solid var(--date-today-border);
+}
+
+/* ==========================================================
+   CALENDAR STYLES: THEATRE TICKET BOOKING STYLE
+   ========================================================== */
+
+/* Large Month Calendar Grid */
+.large-calendar-grid {
+    width: 100%;
+}
+
+.calendar-header-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #64748b;
+    padding: 8px 0;
+    border-bottom: 2px solid #e2e8f0;
+    margin-bottom: 8px;
+}
+
+.calendar-days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+}
+
+/* Date Cell in Large View */
+.cal-day-cell {
+    position: relative;
+    min-height: 85px;
+    padding: 8px 6px;
+    border-radius: 12px;
+    border: 1.5px solid #e2e8f0;
+    background-color: #ffffff;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.cal-day-cell:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    z-index: 2;
+}
+
+.cal-day-cell:active {
+    transform: scale(0.97);
+}
+
+.cal-day-empty {
+    min-height: 85px;
+    background-color: transparent;
+    border: 1px dashed transparent;
+    pointer-events: none;
+}
+
+/* Date Number */
+.cal-day-number {
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+/* Status: Available (Green) */
+.cal-day-available {
+    background-color: var(--date-available-bg) !important;
+    border-color: var(--date-available-border) !important;
+    color: var(--date-available-text) !important;
+}
+
+.cal-day-available .cal-day-badge {
+    background-color: rgba(34, 197, 94, 0.15);
+    color: #15803d;
+    font-size: 0.7rem;
+    font-weight: 600;
+    border-radius: 6px;
+    padding: 2px 4px;
+    text-align: center;
+}
+
+/* Status: Booked (Red) */
+.cal-day-booked {
+    background-color: var(--date-booked-bg) !important;
+    border-color: var(--date-booked-border) !important;
+    color: var(--date-booked-text) !important;
+}
+
+.cal-day-booked .cal-day-badge {
+    background-color: #ef4444;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    border-radius: 6px;
+    padding: 3px 6px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.25);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Status: Today */
+.cal-day-today {
+    border: 3px solid var(--date-today-border) !important;
+    box-shadow: 0 0 0 2px rgba(6, 78, 59, 0.2);
+}
+
+.cal-day-today .cal-day-number::after {
+    content: " TODAY";
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--brand-primary);
+    margin-left: 4px;
+    letter-spacing: 0.05em;
+}
+
+/* Mini Trip Previews in Large Cell */
+.cal-day-trips-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 4px;
+}
+
+.cal-mini-bus-tag {
+    font-size: 0.68rem;
+    background-color: rgba(185, 28, 28, 0.1);
+    color: #991b1b;
+    border-radius: 4px;
+    padding: 1px 4px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ==========================================================
+   FULL YEAR 12-MONTH MINI CALENDARS GRID
+   ========================================================== */
+
+.mini-month-card {
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    transition: all 0.2s ease;
+    overflow: hidden;
+}
+
+.mini-month-card:hover {
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+.mini-month-header {
+    background-color: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 8px 12px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--brand-primary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mini-calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #94a3b8;
+    padding: 4px 6px 2px 6px;
+}
+
+.mini-calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+    padding: 6px;
+}
+
+.mini-cal-cell {
+    aspect-ratio: 1;
+    min-height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.1s ease, filter 0.15s ease;
+    user-select: none;
+}
+
+.mini-cal-cell:hover {
+    transform: scale(1.15);
+    z-index: 3;
+    filter: brightness(0.95);
+}
+
+.mini-cal-available {
+    background-color: var(--date-available-bg);
+    color: var(--date-available-text);
+    border: 1px solid var(--date-available-border);
+}
+
+.mini-cal-booked {
+    background-color: var(--date-booked-bg);
+    color: var(--date-booked-text);
+    border: 1px solid var(--date-booked-border);
+    font-weight: 800;
+}
+
+.mini-cal-today {
+    border: 2px solid var(--date-today-border) !important;
+}
+
+.mini-cal-empty {
+    pointer-events: none;
+    visibility: hidden;
+}
+
+/* ==========================================================
+   POPUP & TRIP DETAILS STYLES
+   ========================================================== */
+
+.trip-card {
+    border-left: 4px solid var(--brand-primary);
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 12px 14px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    margin-bottom: 12px;
+}
+
+.trip-card.booked {
+    border-left-color: #ef4444;
+}
+
+.trip-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #64748b;
+    letter-spacing: 0.03em;
+}
+
+.trip-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    .cal-day-cell {
+        min-height: 60px;
+        padding: 4px 3px;
+        border-radius: 8px;
+    }
+
+    .cal-day-number {
+        font-size: 0.9rem;
+    }
+
+    .cal-day-today .cal-day-number::after {
+        display: none; /* Hide 'TODAY' text on tiny screens, green border conveys it */
+    }
+
+    .cal-day-badge {
+        font-size: 0.6rem !important;
+        padding: 1px 3px !important;
+    }
+
+    .cal-mini-bus-tag {
+        display: none; /* Hide extra tags on small phone grid */
+    }
+
+    .calendar-header-weekdays {
+        font-size: 0.72rem;
+        padding: 4px 0;
+    }
+
+    .mini-cal-cell {
+        min-height: 24px;
+        font-size: 0.7rem;
+    }
+}
+
+/* ==========================================================
+   5-BUS FLEET BANNER & SELECTOR STYLES
+   ========================================================== */
+.fleet-hero-banner {
+    width: 100%;
+    max-height: 220px;
+    overflow: hidden;
+    position: relative;
+    background-color: #064e3b;
+    border-radius: 16px 16px 0 0;
+}
+
+.fleet-banner-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    object-position: center;
+    filter: brightness(0.9);
+    transition: transform 0.4s ease;
+}
+
+.fleet-hero-banner:hover .fleet-banner-img {
+    transform: scale(1.02);
+}
+
+.fleet-hero-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(180deg, rgba(6, 78, 59, 0) 0%, rgba(6, 78, 59, 0.94) 80%);
+}
+
+.text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.fleet-btn {
+    transition: all 0.2s ease;
+    border-width: 1.5px;
+}
+
+.fleet-btn.active {
+    background-color: var(--brand-primary) !important;
+    color: #ffffff !important;
+    border-color: var(--brand-primary) !important;
+    box-shadow: 0 2px 8px rgba(6, 78, 59, 0.35);
+}
+
+.fleet-filter-indicator {
+    background-color: #ecfdf5;
+    border: 1.5px solid #a7f3d0;
+    color: #065f46;
+    border-radius: 10px;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
