@@ -2,7 +2,10 @@ import os
 import io
 import re
 import base64
-from PIL import Image
+try:
+    from PIL import Image
+except ImportError:
+    Image = None
 from flask import Blueprint, render_template, request, jsonify, session
 from models.user import UserModel
 from models.settings import SettingsModel
@@ -179,39 +182,36 @@ def update_fleet_banner():
         else:
             raw_b64 = image_data
 
-        try:
-            img_bytes = base64.b64decode(raw_b64)
-            img = Image.open(io.BytesIO(img_bytes))
-        except Exception as e:
-            return jsonify({"success": False, "error": f"Invalid image format: {e}"}), 400
+        data_uri = image_data
+        if Image is not None:
+            try:
+                img_bytes = base64.b64decode(raw_b64)
+                img = Image.open(io.BytesIO(img_bytes))
+                if img.mode != "RGB":
+                    img = img.convert("RGB")
+                max_dim = 1600
+                if max(img.width, img.height) > max_dim:
+                    img.thumbnail((max_dim, max_dim), Image.Resampling.LANCZOS)
+                out_buf = io.BytesIO()
+                img.save(out_buf, format="JPEG", quality=85, optimize=True)
+                final_b64 = base64.b64encode(out_buf.getvalue()).decode("utf-8")
+                data_uri = f"data:image/jpeg;base64,{final_b64}"
 
-        # Convert to RGB (handle RGBA, PNG, Palette, etc.)
-        if img.mode != "RGB":
-            img = img.convert("RGB")
-
-        # Auto-resize if image is excessively large (max width 1600px)
-        max_dim = 1600
-        if max(img.width, img.height) > max_dim:
-            img.thumbnail((max_dim, max_dim), Image.Resampling.LANCZOS)
-
-        # Optimize to JPEG in memory
-        out_buf = io.BytesIO()
-        img.save(out_buf, format="JPEG", quality=85, optimize=True)
-        final_b64 = base64.b64encode(out_buf.getvalue()).decode("utf-8")
-        data_uri = f"data:image/jpeg;base64,{final_b64}"
+                # Also save to local static/images/fleet.jpg
+                try:
+                    static_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static", "images")
+                    os.makedirs(static_dir, exist_ok=True)
+                    static_fleet_path = os.path.join(static_dir, "fleet.jpg")
+                    with open(static_fleet_path, "wb") as f:
+                        f.write(out_buf.getvalue())
+                except Exception as file_err:
+                    print(f"[BANNER WARNING] Could not write to static disk: {file_err}")
+            except Exception as img_err:
+                print(f"[BANNER WARNING] Image optimization skipped: {img_err}")
+                data_uri = image_data
 
         # 1. Save permanently to MongoDB Atlas
         SettingsModel.set_setting("fleet_banner", data_uri)
-
-        # 2. Also save to local static/images/fleet.jpg for static serving
-        try:
-            static_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static", "images")
-            os.makedirs(static_dir, exist_ok=True)
-            static_fleet_path = os.path.join(static_dir, "fleet.jpg")
-            with open(static_fleet_path, "wb") as f:
-                f.write(out_buf.getvalue())
-        except Exception as file_err:
-            print(f"[BANNER WARNING] Could not write to static disk: {file_err}")
 
         return jsonify({
             "success": True,
